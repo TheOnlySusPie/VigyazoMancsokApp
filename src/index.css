@@ -97,6 +97,50 @@ body {
   filter: saturate(0.72) contrast(0.94);
 }
 
+.user-location-marker {
+  position: relative;
+  display: grid;
+  width: 2.75rem;
+  height: 2.75rem;
+  place-items: center;
+  pointer-events: none;
+}
+
+.user-location-marker::before {
+  position: absolute;
+  width: 2.1rem;
+  height: 2.1rem;
+  border: 2px solid rgba(8, 126, 109, 0.42);
+  border-radius: 50%;
+  content: "";
+  animation: location-pulse 2.2s ease-out infinite;
+}
+
+.user-location-marker::after {
+  position: relative;
+  z-index: 1;
+  width: 1.25rem;
+  height: 1.65rem;
+  border: 2px solid #ffffff;
+  background: linear-gradient(145deg, #159a87, #087e6d);
+  box-shadow: 0 3px 10px rgba(34, 74, 68, 0.34);
+  clip-path: polygon(50% 0, 100% 100%, 50% 79%, 0 100%);
+  content: "";
+}
+
+@keyframes location-pulse {
+  0% {
+    opacity: 0.75;
+    transform: scale(0.7);
+  }
+
+  70%,
+  100% {
+    opacity: 0;
+    transform: scale(1.35);
+  }
+}
+
 .map-controls {
   position: absolute;
   top: 9.5rem;

@@ -95,20 +95,34 @@ export function MapView({ userLocation: { latitude, longitude } }: MapViewProps)
             }
 
             const markerElement = document.createElement('div');
-            markerElement.className = 'custom-blip';
-            markerElement.style.width = '20px';
-            markerElement.style.height = '20px';
-            markerElement.style.backgroundColor = '#00ffcc';
-            markerElement.style.borderRadius = '50%';
-            markerElement.style.boxShadow = '0 0 10px #00ffcc';
+            markerElement.className = 'user-location-marker';
+            markerElement.setAttribute('role', 'img');
+            markerElement.setAttribute('aria-label', 'Jelenlegi helyzet');
 
-            userMarker.current = new maplibregl.Marker({
-                element: markerElement,
-                pitchAlignment: 'map',
-                rotationAlignment: 'map',
-            })
+            const marker = new maplibregl.Marker({ element: markerElement, anchor: 'bottom' })
                 .setLngLat([longitude, latitude])
                 .addTo(currentMap);
+            userMarker.current = marker;
+
+            let isFirstLocationFix = true;
+
+            if(navigator.geolocation != null) {
+               navigator.geolocation.watchPosition((position) => {
+                    const { longitude, latitude } = position.coords;
+                    const userCoords: [number, number] = [longitude, latitude];
+                    
+                    marker.setLngLat(userCoords);
+
+                    if(isFirstLocationFix) {
+                        map.current?.flyTo({ center: userCoords, zoom: 14 })
+                        isFirstLocationFix = false;
+                    } else {
+                        map.current?.panTo(userCoords, {animate: true})
+                    }
+               }, (error) => {
+                    console.error("Hiba történt a geolokáció visszakövetésekkor: ", error);
+               }, {enableHighAccuracy: true, maximumAge: 0, timeout: 5000}) 
+            }
         })
 
         return () => {
