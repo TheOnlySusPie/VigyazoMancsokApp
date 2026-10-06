@@ -108,7 +108,7 @@ export function MapView({ userLocation: { latitude, longitude } }: MapViewProps)
 
             if(navigator.geolocation != null) {
                navigator.geolocation.watchPosition((position) => {
-                    const { longitude, latitude } = position.coords;
+                    const { longitude, latitude, heading } = position.coords;
                     const userCoords: [number, number] = [longitude, latitude];
                     
                     marker.setLngLat(userCoords);
@@ -119,6 +119,11 @@ export function MapView({ userLocation: { latitude, longitude } }: MapViewProps)
                     } else {
                         map.current?.panTo(userCoords, {animate: true})
                     }
+
+                    if(heading != null && heading != undefined) {
+                        marker.setRotation(heading)
+                    }
+
                }, (error) => {
                     console.error("Hiba történt a geolokáció visszakövetésekkor: ", error);
                }, {enableHighAccuracy: true, maximumAge: 0, timeout: 5000}) 
